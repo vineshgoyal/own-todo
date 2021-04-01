@@ -1,60 +1,60 @@
 import React from 'react';
 import { httpRequest } from '../services/httpRequest';
 
-class Home extends React.Component {
-    state={
-        todo: "",
-        todoList: [],
-        counter: 10
-    }
-    onAdd(){
-        let newState = {...this.state};
+function Home(){
+    const [todoList, setTodoList] = React.useState([]);
+    const [todo, setTodo] = React.useState("");
+
+    function onAdd(){
         let singleTodo = {
-            title: newState.todo,
+            title: todo,
             complete: false
         }
-        newState.todo="";
         
         httpRequest.post("todos", singleTodo).then((res)=>{
-            newState.todoList.push(res.data);
-            newState.todo1  = "demo value";
-            this.setState(newState);
+            todoList.push(res.data);
+            setTodoList([...todoList]);
+            setTodo("");
         })
         
     }
-    
-    componentDidMount(){
-        let newState = {...this.state};
+
+    React.useEffect( function(){
         httpRequest.get("todos").then((res)=>{
-            newState.todoList = [...res.data];
-            this.setState(newState)
-        })
-    }
+                    setTodoList([...res.data])
+                })
+    }, [])
+    
+    // componentDidMount(){
+    //     let newState = {...this.state};
+    //     httpRequest.get("todos").then((res)=>{
+    //         newState.todoList = [...res.data];
+    //         this.setState(newState)
+    //     })
+    // }
 
-    onDelete(id, index){
-        httpRequest.delete("todos/" + id).then((res)=>{
-            let todoList = [...this.state.todoList];
-            todoList.splice(index,1);
-            this.setState({
-                todoList: todoList
-            })
-        })
-    }
+    // onDelete(id, index){
+    //     httpRequest.delete("todos/" + id).then((res)=>{
+    //         let todoList = [...this.state.todoList];
+    //         todoList.splice(index,1);
+    //         this.setState({
+    //             todoList: todoList
+    //         })
+    //     })
+    // }
 
-    updateTodo(todo, index, event){
-        let checked = event.target.checked;
-        httpRequest.patch("todos/" + todo.id, {complete: checked } ).then((res)=>{
-            let todoList = [...this.state.todoList];
-            todoList[index].complete = checked;
-            this.setState({
-                todoList: todoList
-            })
-        })
+    // updateTodo(todo, index, event){
+    //     let checked = event.target.checked;
+    //     httpRequest.patch("todos/" + todo.id, {complete: checked } ).then((res)=>{
+    //         let todoList = [...this.state.todoList];
+    //         todoList[index].complete = checked;
+    //         this.setState({
+    //             todoList: todoList
+    //         })
+    //     })
 
-    }
+    // }
 
-    render() {
-        console.log("this.state", this.state)
         return <div className="todo-list-container container-fluid">
             <div className="row">
                 <div className="col">
@@ -69,24 +69,34 @@ class Home extends React.Component {
                         <div className="todo-form">
                             <div className="input-group">
                                 
-                                <input type="text" className="form-control" placeholder="Add your todo" value={this.state.todo} onChange={ (e)=> this.setState({todo:e.target.value }) } />
-                                <button className="btn btn-primary add-icon" id="btnGroupAddon" onClick={this.onAdd.bind(this)}></button>
+                                <input 
+                                    type="text" 
+                                    className="form-control" 
+                                    placeholder="Add your todo" 
+                                    value={todo} 
+                                    onChange={ (e)=> setTodo(e.target.value) } 
+                                />
+                                <button className="btn btn-primary add-icon" id="btnGroupAddon" onClick={ onAdd }></button>
                             </div>
                         </div>
                         <p>
-                            You have {this.state.todoList.length} pending tasks
+                            You have {todoList.length} pending tasks
                         </p>
                         <div className="todo-list">
                             <ul className="list-group">
                                 {
-                                    this.state.todoList.map((singleTodo, index)=> {
+                                    todoList.map((singleTodo, index)=> {
                                         let liClasses = "";
                                         if(singleTodo.complete){
                                             liClasses = "completed-item"
                                         }
                                         return <li className="list-group-item" key={singleTodo.id} >
                                                 
-                                                <h3 className={liClasses}> <input type="checkbox"  checked={singleTodo.complete} onChange={ this.updateTodo.bind(this, singleTodo, index )} /> {singleTodo.title} <button className="btn btn-danger pull-right" onClick={ this.onDelete.bind(this, singleTodo.id, index ) } >Delete</button> </h3>
+                                                <h3 className={liClasses}> 
+                                                    
+                                                    {singleTodo.title} 
+                                                   
+                                                </h3>
                                                 
                                             </li>
                                     })
@@ -100,7 +110,6 @@ class Home extends React.Component {
                 </div>
             </div>
         </div>
-    }
 }
 
 export default Home;

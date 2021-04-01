@@ -1,0 +1,26 @@
+<html>
+
+<head>
+    <title>
+        Test
+    </title>
+</head>
+
+<body>
+
+    <script>
+        let useState = [{
+                name: "user 1"
+            },
+            function() {
+                console.log("im second element of array")
+            }
+        ];
+
+        const [todos, setTodo] = useState;
+        console.log('todos:', todos)
+        setTodo();
+    </script>
+</body>
+
+</html>
