@@ -1,0 +1,20 @@
+.pull-right {
+    float: right;
+}
+
+.todo-list {
+    margin-top: 15px;
+}
+
+.add-icon {
+    width: 50px;
+    background-image: url("http://localhost:3000/add-icon.svg");
+    background-position: center;
+    background-size: 25px;
+    background-repeat: no-repeat;
+}
+
+.completed-item {
+    text-decoration: line-through;
+    color: #aaa;
+}
