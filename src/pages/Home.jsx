@@ -1,9 +1,16 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { httpRequest } from '../services/httpRequest';
-
+import Header from './Header';
 function Home() {
     const [todoList, setTodoList] = useState([]);
     const [todo, setTodo] = useState("");
+    const [header, setHeader] = useState("Default HEader");
+    React.useEffect(function () {
+        httpRequest.get("todos").then((res) => {
+            console.log('res:', res.data)
+            setTodoList([...res.data])
+        })
+    }, [])
 
     function onAdd() {
         let singleTodo = {
@@ -19,12 +26,7 @@ function Home() {
 
     }
 
-    React.useEffect(function () {
-        httpRequest.get("todos").then((res) => {
-            console.log('res:', res.data)
-            setTodoList([...res.data])
-        })
-    }, [])
+    
 
     function onDelete(id, index) {
         httpRequest.delete("todos/" + id).then((res) => {
@@ -44,6 +46,10 @@ function Home() {
 
     }
 
+    function changeHeader(){
+        setHeader("new Header" + Math.random().toFixed(2))
+    }
+    console.log("render")
     return <div className="todo-list-container container-fluid">
         <div className="row">
             <div className="col">
@@ -51,9 +57,9 @@ function Home() {
             </div>
             <div className="col">
                 <div className="todo-box">
-                    <h1>
-                        Todo List
-                        </h1>
+                    <div onClick={changeHeader}>
+                        <Header title={header} />
+                    </div>
 
                     <div className="todo-form">
                         <div className="input-group">
@@ -84,6 +90,7 @@ function Home() {
                                         <h3 className={liClasses}>
                                             <input type="checkbox" checked={singleTodo.complete} onChange={updateTodo.bind(null, singleTodo, index)} />
                                             {singleTodo.title}
+                                            <button className="btn btn-info pull-right">Edit</button>
                                             <button className="btn btn-danger pull-right" onClick={onDelete.bind(null, singleTodo.id, index)} >Delete</button>
                                         </h3>
 
