@@ -1,16 +1,24 @@
 import React from 'react';
 import { httpRequest } from '../services/httpRequest';
 import Header from './Header';
-
+import Test from './Test';
+import TestSecond from './TestSecond';
 class Home extends React.Component {
     state = {
         todo: "",
         todoList: [],
         counter: 10,
-        headerTitle: "Todo List"
+        headerTitle: "Todo List",
+        error: null
     }
     
     onAdd() {
+        if (this.state.todo == "") {
+            this.setState({
+                error: "To create new todo, Need some text."
+            });
+            return;
+        }
         let newState = { ...this.state };
         let singleTodo = {
             title: newState.todo,
@@ -21,6 +29,7 @@ class Home extends React.Component {
         httpRequest.post("todos", singleTodo).then((res) => {
             newState.todoList.push(res.data);
             newState.todo1 = "demo value";
+            newState.error = null;
             this.setState(newState);
         })
 
@@ -59,6 +68,8 @@ class Home extends React.Component {
     render() {
         console.log("this.state", this.state)
         return <div className="todo-list-container container-fluid">
+            <Test />
+            <TestSecond />
             <div className="row">
                 <div className="col">
 
@@ -76,6 +87,7 @@ class Home extends React.Component {
                                 <input type="text" className="form-control" placeholder="Add your todo" value={this.state.todo} onChange={(e) => this.setState({ todo: e.target.value })} />
                                 <button className="btn btn-primary add-icon" id="btnGroupAddon" onClick={this.onAdd.bind(this)}></button>
                             </div>
+                            <p className='text-danger'>{this.state.error}</p>
                         </div>
                         <p>
                             You have {this.state.todoList.length} pending tasks
