@@ -1,8 +1,7 @@
 import React from 'react';
 import { httpRequest } from '../services/httpRequest';
+import { ToasterContext } from '../services/toasterContext';
 import Header from './Header';
-import Test from './Test';
-import TestSecond from './TestSecond';
 class Home extends React.Component {
     state = {
         todo: "",
@@ -11,7 +10,9 @@ class Home extends React.Component {
         headerTitle: "Todo List",
         error: null
     }
-    
+
+    static contextType = ToasterContext;
+
     onAdd() {
         if (this.state.todo == "") {
             this.setState({
@@ -30,6 +31,7 @@ class Home extends React.Component {
             newState.todoList.push(res.data);
             newState.todo1 = "demo value";
             newState.error = null;
+            this.context.showToaster(<span className="text-success">A new Todo added</span>);
             this.setState(newState);
         })
 
@@ -46,10 +48,12 @@ class Home extends React.Component {
     onDelete(id, index) {
         httpRequest.delete("todos/" + id).then((res) => {
             let todoList = [...this.state.todoList];
-            todoList.splice(index, 1);
+            let deletedTodo = todoList.splice(index, 1);
+            console.log('deletedTodo:', deletedTodo)
             this.setState({
                 todoList: todoList
             })
+            this.context.showToaster(<span className="text-danger">The Todo (<b>{deletedTodo[0].title}</b>) has deleted.</span>);
         })
     }
 
@@ -66,13 +70,11 @@ class Home extends React.Component {
     }
 
     render() {
-        console.log("this.state", this.state)
+
         return <div className="todo-list-container container-fluid">
-            <Test />
-            <TestSecond />
             <div className="row">
                 <div className="col">
-
+                   
                 </div>
                 <div className="col">
                     <div className="todo-box">

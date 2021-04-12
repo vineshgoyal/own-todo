@@ -18,3 +18,9 @@
     text-decoration: line-through;
     color: #aaa;
 }
+
+.main-toaster {
+    position: absolute;
+    top: 0;
+    right: 0;
+}
